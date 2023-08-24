@@ -182,3 +182,6 @@ GROUP BY Occupation
 ORDER BY AvgActivityLevel;
 
 
+-- With data cleaned and various insights gained, we went to Tableau to visualize findings. 
+
+

@@ -19,7 +19,7 @@ CREATE TABLE healthClean (
 );
 
 -- Insert data into new table with proper formatting
-INSERT INTO healthClean (
+INSERT INTO dbo.healthClean (
     Person_ID,
     Gender,
     Age,
@@ -60,7 +60,7 @@ SELECT DISTINCT * FROM dbo.healthClean
 		-- No duplicates
 
 -- Remove blanks
-DELETE FROM healthClean
+DELETE FROM dbo.healthClean
 WHERE PersonID IS NULL 
 OR Gender IS NULL 
 OR Age IS NULL 
@@ -76,17 +76,17 @@ OR DailySteps IS NULL
 OR SleepDisorder IS NULL;
 
 
--- Now time for EDA
+-- Now time for EDA (Exploratory Data Analysis)
 
 -- Record count
-SELECT COUNT(*) FROM healthClean;
+SELECT COUNT(*) FROM dbo.healthClean;
 
 -- Summary statistics for age column
 SELECT
     AVG(Age) AS AverageAge,
     MIN(Age) AS MinAge,
     MAX(Age) AS MaxAge
-FROM healthClean;
+FROM dbo.healthClean;
 
 
 -- Count of records by gender
@@ -111,26 +111,26 @@ ORDER BY AverageAge;
 SELECT
     AVG(CAST(SUBSTRING(BloodPressure, 1, CHARINDEX('/', BloodPressure) - 1) AS INT)) AS "Average Systolic",
     AVG(CAST(SUBSTRING(BloodPressure, CHARINDEX('/', BloodPressure) + 1, LEN(BloodPressure)) AS INT)) AS "Average Diastolic"
-FROM healthClean;
+FROM dbo.healthClean;
 
 -- Average age by gender
 SELECT Gender, AVG(Age) AS AvgAge
-FROM healthClean
+FROM dbo.healthClean
 GROUP BY Gender;
 
 -- Find top 10 highest heart rates
 SELECT TOP 10 PersonID, Age, HeartRate
-FROM healthClean
+FROM dbo.healthClean
 ORDER BY HeartRate DESC;
 
 -- Examine correlate between stress level and sleep
 SELECT PersonID, StressLevel, SleepDisorder, SleepQuality
-FROM healthClean
+FROM dbo.healthClean
 WHERE StressLevel >= 5 AND SleepDisorder != 'none'
 ORDER BY StressLevel DESC;
 -- Examine corrrelation between stress and sleep duration
 SELECT StressLevel, AVG(SleepDuration) AS AverageSleepDuration
-FROM healthClean
+FROM dbo.healthClean
 GROUP BY StressLevel;
 
 
@@ -143,7 +143,7 @@ SELECT
     ELSE '50 and over'
   END AS AgeGroup,
   AVG(SleepQuality) AS AvgSleepQuality
-FROM healthClean
+FROM dbo.healthClean
 GROUP BY
   CASE
     WHEN Age < 30 THEN 'Under 30'
@@ -156,7 +156,7 @@ GROUP BY
 
 
 -- Change BMI Category so we just have normal weight, overweight, and obese
-UPDATE healthClean
+UPDATE dbo.healthClean
 SET BMICategory = CASE
                     WHEN BMICategory = 'Normal' THEN 'Normal Weight'
                     ELSE BMICategory
@@ -164,19 +164,19 @@ SET BMICategory = CASE
 
 -- How occupation impacts sleep and stress
 SELECT TOP 5 Occupation, AVG(SleepDuration) AS AvgSleepDuration, AVG(StressLevel) AS AvgStress
-FROM healthClean
+FROM dbo.healthClean
 GROUP BY Occupation
 ORDER BY AvgSleepDuration DESC;
 
 -- Correlation from BMI to sleep per gender
 SELECT BMICategory, Gender, AVG(SleepDuration) AS AvgSleepDuration, AVG(SleepQuality) AS SleepQuality
-FROM healthClean
+FROM dbo.healthClean
 GROUP BY BMICategory, Gender
 ORDER BY AvgSleepDuration;
 
 -- Correlation between occupation and physical activity
 SELECT Occupation, AVG(DailyPhysicalActivity) AS AvgActivityLevel
-FROM healthClean
+FROM dbo.healthClean
 WHERE Age < 40
 GROUP BY Occupation
 ORDER BY AvgActivityLevel;
